@@ -69,11 +69,19 @@ class CreateRecipe extends React.Component {
                   {ele}
                   {': '}
                 </label>
-                <input 
-                  value={this.state[keys[i]]}
-                  name={keys[i]}
-                  onChange={this.updateForm}
-                />
+                { ele === 'Ingredients' || ele === 'Direction' ? 
+                  <textarea 
+                    value={this.state[keys[i]]}
+                    name={keys[i]}
+                    onChange={this.updateForm}
+                  />
+                  :
+                  <input 
+                    value={this.state[keys[i]]}
+                    name={keys[i]}
+                    onChange={this.updateForm}
+                  />
+                }
               </div>
             ))
           }
