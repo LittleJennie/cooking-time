@@ -26,5 +26,7 @@ CREATE TABLE IF NOT EXISTS reviews (
   id serial PRIMARY KEY,
   review_text text NOT NULL,
   user_id serial REFERENCES users(id),
-  recipe_id REFERENCES recipes(id)
+  recipe_id serial REFERENCES recipes(id)
 );
+
+INSERT INTO users (user_name) VALUES ('Anonymous');
