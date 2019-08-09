@@ -1,0 +1,29 @@
+{
+  "name": "cooking-time",
+  "version": "1.0.0",
+  "description": "A place to share your recipe and enjoy more variety of cooking experience!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LittleJennie/cooking-time.git"
+  },
+  "author": "Jennie Zeng",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LittleJennie/cooking-time/issues"
+  },
+  "homepage": "https://github.com/LittleJennie/cooking-time#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "morgan": "^1.9.1",
+    "pg": "^7.12.0"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^7.0.0",
+    "webpack": "^4.39.1",
+    "webpack-cli": "^3.3.6"
+  }
+}
