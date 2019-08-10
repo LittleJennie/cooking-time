@@ -93,6 +93,7 @@ class CreateRecipe extends React.Component {
     ];
 
     const keys = Object.keys(this.state);
+    const { images, recipeName } = this.state;
 
     return(
       <div>
@@ -122,8 +123,19 @@ class CreateRecipe extends React.Component {
               </div>
             ))
           }
-        <input type="file" onChange={this.uploadFile} multiple/>
+          <input type="file" onChange={this.uploadFile} multiple/>
         </form>
+        <div>
+          {
+            images.map((img, i) => (
+              <img
+                src={img}
+                alt={`${recipeName}-img-${i}`}
+                key={`${recipeName}-${img}`}
+              />
+            ))
+          }
+        </div>
         <button onClick={this.submitForm}>Create Recipe</button>
       </div>
     );
