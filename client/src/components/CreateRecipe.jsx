@@ -17,6 +17,7 @@ class CreateRecipe extends React.Component {
 
     this.updateForm = this.updateForm.bind(this);
     this.submitForm = this.submitForm.bind(this);
+    this.uploadFile = this.uploadFile.bind(this);
   }
 
   updateForm (e) {
@@ -26,6 +27,40 @@ class CreateRecipe extends React.Component {
     newState[e.target.name] = e.target.value;
 
     this.setState(newState);
+  }
+
+  uploadFile (e) {
+    const files = Array.from(e.target.files);
+    const fileData = new FormData();
+
+    files.forEach((file, i) => {
+      // fileData[i] = file;
+      fileData.append('recipePic', file, file.name);
+    });
+
+    const config = {
+        headers: { 'content-type': 'multipart/form-data' }
+    }
+
+    // let data = new FormData();
+
+    // for (var i = 0; i < files.length; i++) {
+    //     let file = files.item(i);
+    //     data.append('images[' + i + ']', file, file.name);
+    // }
+
+    // const config = {
+    //     headers: { 'content-type': 'multipart/form-data' }
+    // }
+
+    // return axios.post('/api/images', data, config)
+    axios.post('/uploadImage', fileData, config)
+      .then(({ data }) => {
+        const { images } = this.state;
+        images.push(data.imageUrl);
+        this.setState({ images });
+      })
+      .catch(err => console.log(err));
   }
 
   submitForm () {
@@ -50,8 +85,8 @@ class CreateRecipe extends React.Component {
 
   render() {
     const inputFields = [
-      'Recipe Name', 
-      'Serving Size', 
+      'Recipe Name',
+      'Serving Size',
       'Cooking Time',
       'Ingredients',
       'Direction',
@@ -69,14 +104,16 @@ class CreateRecipe extends React.Component {
                   {ele}
                   {': '}
                 </label>
-                { ele === 'Ingredients' || ele === 'Direction' ? 
-                  <textarea 
+                { ele === 'Ingredients' || ele === 'Direction' ?
+                  <textarea
+                    type="text"
                     value={this.state[keys[i]]}
                     name={keys[i]}
                     onChange={this.updateForm}
                   />
                   :
-                  <input 
+                  <input
+                    type="text"
                     value={this.state[keys[i]]}
                     name={keys[i]}
                     onChange={this.updateForm}
@@ -85,10 +122,11 @@ class CreateRecipe extends React.Component {
               </div>
             ))
           }
+        <input type="file" onChange={this.uploadFile} multiple/>
         </form>
         <button onClick={this.submitForm}>Create Recipe</button>
       </div>
-    )
+    );
   }
 }
 
