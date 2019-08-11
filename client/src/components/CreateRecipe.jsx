@@ -13,11 +13,14 @@ class CreateRecipe extends React.Component {
       direction: '',
       images: [],
       userId: 1,
+      previewImgs: [],
+      file: '',
     };
 
     this.updateForm = this.updateForm.bind(this);
     this.submitForm = this.submitForm.bind(this);
-    this.uploadFile = this.uploadFile.bind(this);
+    this.uploadImg = this.uploadImg.bind(this);
+    this.previewImg = this.previewImg.bind(this);
   }
 
   updateForm (e) {
@@ -29,14 +32,24 @@ class CreateRecipe extends React.Component {
     this.setState(newState);
   }
 
-  uploadFile (e) {
-    const files = Array.from(e.target.files);
+  previewImg (e) {
+    let { previewImgs, file } = this.state;
+    previewImgs.push(URL.createObjectURL(event.target.files[0]));
+    file = event.target.files[0];
+
+    this.setState({ previewImgs, file });
+  }
+
+  uploadImg (e) {
+    e.preventDefault();
+    let { file } = this.state;
     const fileData = new FormData();
 
-    files.forEach((file, i) => {
-      // fileData[i] = file;
-      fileData.append('recipePic', file, file.name);
-    });
+    // files.forEach((file, i) => {
+    //   // fileData[i] = file;
+    //   fileData.append('recipePic', file, file.name);
+    // });
+    fileData.append('recipePic', file, file.name);
 
     const config = {
         headers: { 'content-type': 'multipart/form-data' }
@@ -56,9 +69,10 @@ class CreateRecipe extends React.Component {
     // return axios.post('/api/images', data, config)
     axios.post('/uploadImage', fileData, config)
       .then(({ data }) => {
-        const { images } = this.state;
+        let { images, file } = this.state;
         images.push(data.imageUrl);
-        this.setState({ images });
+        file = '';
+        this.setState({ images, file });
       })
       .catch(err => console.log(err));
   }
@@ -74,6 +88,7 @@ class CreateRecipe extends React.Component {
       direction: '',
       images: [],
       userId: 1,
+      previewImgs: [],
     };
 
     axios.post('/createRecipe', {
@@ -93,7 +108,12 @@ class CreateRecipe extends React.Component {
     ];
 
     const keys = Object.keys(this.state);
-    const { images, recipeName } = this.state;
+    const { previewImgs, recipeName } = this.state;
+
+    const imgStyle = {
+      width: "50px",
+      height: "50px",
+    }
 
     return(
       <div>
@@ -123,12 +143,14 @@ class CreateRecipe extends React.Component {
               </div>
             ))
           }
-          <input type="file" onChange={this.uploadFile} multiple/>
+          <input type="file" onChange={this.previewImg} multiple/>
+          <input type="submit" onClick={this.uploadImg} multiple/>
         </form>
         <div>
           {
-            images.map((img, i) => (
+            previewImgs.map((img, i) => (
               <img
+                style={imgStyle}
                 src={img}
                 alt={`${recipeName}-img-${i}`}
                 key={`${recipeName}-${img}`}
