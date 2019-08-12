@@ -3,8 +3,6 @@ const pg = require('../db');
 module.exports = (req, res) => {
   const { recipeName, userId, ingredients, direction, servingSize, cookingTime, images } = req.body.data;
 
-  console.log(recipeName, userId, ingredients, direction, servingSize, cookingTime, images)
-
   const recipeQuery = {
     name: 'create-recipe',
     text: `
@@ -17,11 +15,9 @@ module.exports = (req, res) => {
 
   pg.query(recipeQuery)
     .then(data => {
-      console.log(data);
       res.status(201).json(data);
     })
     .catch(err => {
-      console.log(err);
       res.status(500).json(err);
     });
-}
+};
