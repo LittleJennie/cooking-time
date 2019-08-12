@@ -22,7 +22,7 @@ class CreateRecipe extends React.Component {
     this.previewImg = this.previewImg.bind(this);
   }
 
-  updateForm (e) {
+  updateForm(e) {
     e.preventDefault();
     const newState = this.state;
 
@@ -31,15 +31,18 @@ class CreateRecipe extends React.Component {
     this.setState(newState);
   }
 
-  previewImg (e) {
+  previewImg(e) {
     let { previewImgs, files } = this.state;
-    previewImgs.push(URL.createObjectURL(event.target.files[0]));
-    files.push(event.target.files[0]);
+
+    for (let i = 0; i < e.target.files.length; i ++) {
+      previewImgs.push(URL.createObjectURL(e.target.files[i]));
+      files.push(event.target.files[i]);
+    }
 
     this.setState({ previewImgs, files });
   }
 
-  submitForm () {
+  submitForm() {
     let { images, files } = this.state;
 
     const resetForm = {
