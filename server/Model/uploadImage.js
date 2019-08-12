@@ -5,7 +5,6 @@ const multipleUpload = upload.array('recipePic');
 module.exports = (req, res) => {
   multipleUpload(req, res, (err) => {
     if (err) {
-      console.log(err);
       return res.status(422).send({
         errors: [{
           title: 'File Upload Error',
@@ -17,7 +16,6 @@ module.exports = (req, res) => {
     const filesLocation = [];
 
     for (let i = 0; i < req.files.length; i ++) {
-      console.log(req.files[i].location)
       filesLocation.push(req.files[i].location);
     }
     
