@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import helperFunctions from '../helperFunctions';
 
 class CreateRecipe extends React.Component {
   constructor () {
@@ -14,12 +15,11 @@ class CreateRecipe extends React.Component {
       images: [],
       userId: 1,
       previewImgs: [],
-      file: '',
+      files: [],
     };
 
     this.updateForm = this.updateForm.bind(this);
     this.submitForm = this.submitForm.bind(this);
-    this.uploadImg = this.uploadImg.bind(this);
     this.previewImg = this.previewImg.bind(this);
   }
 
@@ -33,52 +33,15 @@ class CreateRecipe extends React.Component {
   }
 
   previewImg (e) {
-    let { previewImgs, file } = this.state;
+    let { previewImgs, files } = this.state;
     previewImgs.push(URL.createObjectURL(event.target.files[0]));
-    file = event.target.files[0];
+    files.push(event.target.files[0]);
 
-    this.setState({ previewImgs, file });
-  }
-
-  uploadImg (e) {
-    e.preventDefault();
-    let { file } = this.state;
-    const fileData = new FormData();
-
-    // files.forEach((file, i) => {
-    //   // fileData[i] = file;
-    //   fileData.append('recipePic', file, file.name);
-    // });
-    fileData.append('recipePic', file, file.name);
-
-    const config = {
-        headers: { 'content-type': 'multipart/form-data' }
-    }
-
-    // let data = new FormData();
-
-    // for (var i = 0; i < files.length; i++) {
-    //     let file = files.item(i);
-    //     data.append('images[' + i + ']', file, file.name);
-    // }
-
-    // const config = {
-    //     headers: { 'content-type': 'multipart/form-data' }
-    // }
-
-    // return axios.post('/api/images', data, config)
-    axios.post('/uploadImage', fileData, config)
-      .then(({ data }) => {
-        let { images, file } = this.state;
-        images.push(data.imageUrl);
-        file = '';
-        this.setState({ images, file });
-      })
-      .catch(err => console.log(err));
+    this.setState({ previewImgs, files });
   }
 
   submitForm () {
-    const form = this.state;
+    let { images, files } = this.state;
 
     const resetForm = {
       recipeName: '',
@@ -91,9 +54,40 @@ class CreateRecipe extends React.Component {
       previewImgs: [],
     };
 
-    axios.post('/createRecipe', {
-      data: form,
-    })
+    helperFunctions.uploadImage(files)
+      .then(({ data }) => {
+        for (let i = 0; i < data.imageUrl.length; i ++) {
+          images.push(data.imageUrl[i]);
+        }
+
+        files = [];
+        this.setState({ images, files });
+      })
+      .catch(err => console.log(err))
+      .then(() => {
+        const {
+          recipeName,
+          servingSize,
+          cookingTime,
+          ingredients,
+          direction,
+          images,
+          userId,
+        } = this.state;
+
+        const formData = {
+          recipeName,
+          servingSize,
+          cookingTime,
+          ingredients,
+          direction,
+          images,
+          userId,
+        };
+
+        return helperFunctions.submitRecipe(formData)
+      })
+      .then(() => this.imgInput.value = null)
       .then(() => this.setState(resetForm))
       .catch(err => console.log(err));
   }
@@ -111,9 +105,9 @@ class CreateRecipe extends React.Component {
     const { previewImgs, recipeName } = this.state;
 
     const imgStyle = {
-      width: "50px",
-      height: "50px",
-    }
+      width: '100px',
+      height: '100px',
+    };
 
     return(
       <div>
@@ -143,8 +137,12 @@ class CreateRecipe extends React.Component {
               </div>
             ))
           }
-          <input type="file" onChange={this.previewImg} multiple/>
-          <input type="submit" onClick={this.uploadImg} multiple/>
+          <input 
+            type="file" 
+            onChange={this.previewImg} 
+            ref={ ref => this.imgInput = ref }
+            multiple
+          />
         </form>
         <div>
           {
